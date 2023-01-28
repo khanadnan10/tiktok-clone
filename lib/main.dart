@@ -1,26 +1,38 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tiktokclone/controller/authController.dart';
 import 'package:tiktokclone/firebase_options.dart';
+import 'package:tiktokclone/screens/auth/login_screen.dart';
+import 'package:tiktokclone/screens/home.dart';
+import 'package:tiktokclone/utils/constants.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthController()),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData.dark().copyWith(
-        
-      ),
-      title: 'Flutter Demo',
-      home: const Text('Flutter Demo Home Page'),
-    );
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData.dark().copyWith(
+          scaffoldBackgroundColor: kBackgroundColor,
+        ),
+        title: 'Flutter Demo',
+        home:  LoginScreen());
   }
 }
