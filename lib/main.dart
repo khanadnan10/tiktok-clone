@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiktokclone/controller/authController.dart';
 import 'package:tiktokclone/firebase_options.dart';
-import 'package:tiktokclone/screens/auth/login_screen.dart';
-import 'package:tiktokclone/screens/home.dart';
+import 'package:tiktokclone/screens/auth/root.dart';
 import 'package:tiktokclone/utils/constants.dart';
 
 Future<void> main() async {
@@ -13,12 +12,7 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => AuthController()),
-      ],
-      child: MyApp(),
-    ),
+    const MyApp(),
   );
 }
 
@@ -27,12 +21,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.dark().copyWith(
-          scaffoldBackgroundColor: kBackgroundColor,
-        ),
-        title: 'Flutter Demo',
-        home:  LoginScreen());
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => AuthController()),
+          StreamProvider(
+            create: (context) => context.read<AuthController>().authState,
+            initialData: null,
+          ),
+        ],
+        child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData.dark().copyWith(
+              scaffoldBackgroundColor: kBackgroundColor,
+            ),
+            title: 'Flutter Demo',
+            home: Root()));
   }
 }

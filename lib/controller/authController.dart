@@ -13,16 +13,16 @@ class AuthController extends ChangeNotifier {
   File? get profileImage => _profileImage;
 
   // Exisiting user login
-  model.User? _user(User? user) {
-    if (user == null) {
-      return null;
-    }
-    ;
-    return model.User(name: '', email: user.email!, uid: user.uid);
-  }
-  Stream<model.User?>? get user {}
+  Stream<User?> get authState => firebaseAuth.idTokenChanges();
 
-  
+  Stream<model.User?>? get user {
+    return firebaseAuth.authStateChanges().map(
+          (User? user) => (user != null)
+              ? model.User(
+                  name: user.displayName!, email: user.email!, uid: user.uid)
+              : null,
+        );
+  }
 
   // Register User
   Future<void> registerUser(BuildContext context, String username, String email,
@@ -97,8 +97,20 @@ class AuthController extends ChangeNotifier {
     try {
       await firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
+      // notifyListeners();
     } on FirebaseAuthException catch (e) {
-      e.message;
+      debugPrint(e.message);
+    }
+  }
+
+  Future<void> signOut() async {
+    try {
+      await firebaseAuth.signOut();
+      
+      await firebaseAuth.currentUser;
+      notifyListeners();
+    } on Exception catch (e) {
+      debugPrint(e.toString());
     }
   }
 }
