@@ -11,17 +11,14 @@ class AuthController extends ChangeNotifier {
   late File? _profileImage;
 
   File? get profileImage => _profileImage;
-
+  bool img = false;
   // Exisiting user login
-  Stream<User?> get authState => firebaseAuth.idTokenChanges();
-
-  Stream<model.User?>? get user {
-    return firebaseAuth.authStateChanges().map(
-          (User? user) => (user != null)
-              ? model.User(
-                  name: user.displayName!, email: user.email!, uid: user.uid)
-              : null,
-        );
+  bool isLogin = false;
+  Stream<User?> get user => firebaseAuth.userChanges();
+  Stream<User?> get isUser {
+    return firebaseAuth.authStateChanges().map((User? _user) {
+      _user == null ? null : isLogin = true;
+    });
   }
 
   // Register User
@@ -54,7 +51,7 @@ class AuthController extends ChangeNotifier {
             .doc(cred.user!.uid)
             .set(user.toJson());
       } else {
-        Utils.snackBar(context, 'Enter Valid Details!');
+        // Utils.snackBar(context, 'Enter Valid Details!');
       }
     } catch (e) {
       debugPrint(e.toString());
@@ -95,6 +92,7 @@ class AuthController extends ChangeNotifier {
 
   Future<void> signIn(String email, String password) async {
     try {
+      if (email.isNotEmpty && password.isNotEmpty) {}
       await firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
       // notifyListeners();
@@ -106,11 +104,9 @@ class AuthController extends ChangeNotifier {
   Future<void> signOut() async {
     try {
       await firebaseAuth.signOut();
-      
-      await firebaseAuth.currentUser;
-      notifyListeners();
     } on Exception catch (e) {
-      debugPrint(e.toString());
+      print(e.toString());
     }
   }
 }
+

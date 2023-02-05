@@ -18,6 +18,7 @@ class User {
         uid: json["uid"],
     );
 
+
     Map<String, dynamic> toJson() => {
         "name": name,
         "profilePhoto": profilePhoto,

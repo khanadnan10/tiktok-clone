@@ -5,7 +5,8 @@ class CustomTextField extends StatelessWidget {
   final String hintText;
   final bool isObscure;
 
-  const CustomTextField({super.key, 
+  const CustomTextField({
+    super.key,
     required this.controller,
     required this.hintText,
     required this.isObscure,
@@ -13,12 +14,17 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
       controller: controller,
       decoration: InputDecoration(
         hintText: hintText,
       ),
       obscureText: isObscure,
+      validator: (value) {
+        if (value == null && value!.isEmpty) {
+          return 'Enter all fields';
+        }
+      },
     );
   }
 }
